@@ -1,23 +1,41 @@
 package galerie.entity;
+
+import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 
 // Un exemple d'entité
 // On utilise Lombok pour auto-générer getter / setter / toString...
 // cf. https://examples.javacodegeeks.com/spring-boot-with-lombok/
-@Getter @Setter @NoArgsConstructor @RequiredArgsConstructor @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
+@ToString
 @Entity // Une entité JPA
 public class Galerie {
-    @Id  @GeneratedValue(strategy = GenerationType.IDENTITY) 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true)
+    @Column(unique = true)
     @NonNull
     private String nom;
-    
-    @Column(unique=true)
-    @NonNull
+
     private String adresse;
-    
-    // TODO : Mettre en oeuvre la relation oneToMany vers Exposition
+
+    @OneToMany(mappedBy = "organisateur")
+    @ToString.Exclude
+    private List<Exposition> evenements;
+
+    public float CAannuel(int annee) {
+        float calculCAannuel = 0;
+        for (Exposition e : evenements) {
+            if (e.getDebut().getYear() == annee) {
+                calculCAannuel += e.CA();
+            }
+        }
+        return calculCAannuel;
+    }
 }
